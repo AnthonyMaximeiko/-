@@ -1,0 +1,21 @@
+WITH Carriages AS (
+  SELECT
+    CarriageID,
+    SUM(Volume) AS TotalVolume,
+    ROW_NUMBER() OVER (ORDER BY SUM(Volume) DESC) AS RowNum
+  FROM
+    MyTable
+  WHERE
+    CAST(MomentOut AS DATETIME) >= DATEADD(MONTH, -1, GETDATE())
+  GROUP BY
+    CarriageID
+)
+SELECT TOP 10 PERCENT
+  C.CarriageID,
+  C.TotalVolume
+FROM
+  Carriages AS C
+WHERE
+  C.RowNum <= 10
+ORDER BY
+  C.TotalVolume DESC
