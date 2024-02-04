@@ -1,0 +1,17 @@
+WITH Packages AS (
+  SELECT
+    OrderNumber,
+    Moment,
+    PackageName,
+    ROW_NUMBER() OVER (PARTITION BY OrderNumber ORDER BY Moment DESC) AS RowNum
+  FROM
+    MyTable
+)
+SELECT
+  OrderNumber,
+  Moment AS ChosenMoment,
+  PackageName
+FROM
+  RankedPackages
+WHERE
+  RowNum = 1
